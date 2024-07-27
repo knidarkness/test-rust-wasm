@@ -3,15 +3,15 @@ import { faker } from '@faker-js/faker';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 
 interface Customer {
-    id: string;
-    name: string;
+    customerId: string;
+    customer_name: string;
     email: string;
     phone: string;
 }
 
 interface Vendor {
-    id: string;
-    name: string;
+    vendorId: string;
+    company_name: string;
     email: string;
     phone: string;
     address: string;
@@ -19,24 +19,24 @@ interface Vendor {
 }
 
 interface Product {
-    id: string;
-    name: string;
+    productId: string;
+    product_name: string;
     price: number;
 }
 
 interface PurchaseOrder {
     id: string;
-    customerId: string;
-    vendorId: string;
-    productId: string;
+    orderCustomerId: string;
+    orderVendorId: string;
+    orderProductId: string;
 }
 
 const generateCustomers = (amount: number): Customer[] => {
     const customers: Customer[] = [];
     for (let i = 0; i < amount; i++) {
         customers.push({
-            id: uuidv4(),
-            name: faker.person.fullName(),
+            customerId: uuidv4(),
+            customer_name: faker.person.fullName(),
             email: faker.internet.email(),
             phone: faker.phone.number(),
         });
@@ -48,8 +48,8 @@ const generateVendors = (amount: number): Vendor[] => {
     const vendors: Vendor[] = [];
     for (let i = 0; i < amount; i++) {
         vendors.push({
-            id: uuidv4(),
-            name: faker.company.name(),
+            vendorId: uuidv4(),
+            company_name: faker.company.name(),
             email: faker.internet.email(),
             phone: faker.phone.number(),
             address: faker.location.streetAddress(),
@@ -63,8 +63,8 @@ const generateProducts = (amount: number): Product[] => {
     const products: Product[] = [];
     for (let i = 0; i < amount; i++) {
         products.push({
-            id: uuidv4(),
-            name: faker.commerce.productName(),
+            productId: uuidv4(),
+            product_name: faker.commerce.productName(),
             price: parseFloat(faker.commerce.price({min: 10, max: 1000})),
         });
     }
@@ -84,19 +84,26 @@ const generatePurchaseOrders = (
         for (let i = 0; i < amount; i++) {
             purchaseOrders.push({
                 id: uuidv4(),
-                customerId: customers[Math.floor(Math.random() * customers.length)].id,
-                vendorId: vendors[Math.floor(Math.random() * vendors.length)].id,
-                productId: products[Math.floor(Math.random() * products.length)].id,
+                orderCustomerId: customers[Math.floor(Math.random() * customers.length)].customerId,
+                orderVendorId: vendors[Math.floor(Math.random() * vendors.length)].vendorId,
+                orderProductId: products[Math.floor(Math.random() * products.length)].productId,
             });
         }
         return purchaseOrders;
 }
 
 const main = () => {
-    const customers = generateCustomers(500);
-    const vendors = generateVendors(20);
-    const products = generateProducts(50);
-    const purchaseOrders = generatePurchaseOrders(10000, customers, vendors, products);
+    const customersAmount = process.env.CUSTOMERS ? parseInt(process.env.CUSTOMERS) : 500;
+    const vendorsAmount = process.env.VENDORS ? parseInt(process.env.VENDORS) : 20;
+    const productsAmount = process.env.PRODUCTS ? parseInt(process.env.PRODUCTS) : 50;
+    const purchaseOrdersAmount = process.env.PURCHASE_ORDERS ? parseInt(process.env.PURCHASE_ORDERS) : 10000;
+
+    console.log(`Generating ${customersAmount} customers, ${vendorsAmount} vendors, ${productsAmount} products, and ${purchaseOrdersAmount} purchase orders`);
+
+    const customers = generateCustomers(customersAmount);
+    const vendors = generateVendors(vendorsAmount);
+    const products = generateProducts(productsAmount);
+    const purchaseOrders = generatePurchaseOrders(purchaseOrdersAmount, customers, vendors, products);
 
     if (!existsSync('./output')) {
         mkdirSync('./output');
