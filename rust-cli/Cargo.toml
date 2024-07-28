@@ -1,0 +1,13 @@
+[package]
+name = "rust-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[dependencies.polars]
+version = "0.41.3"
+features = [
+    'json',
+    'lazy',
+]
