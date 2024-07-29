@@ -1,5 +1,7 @@
 # pola.rs tests
 
+## Collecting after each join via `.collect().lazy()`
+
 on 2kk purchase events, 5k vendors, 5k products, 5k customers
 ```bash
 knidarkness@knidarknes-yoga:~/work/test-rust-wasm/rust-cli$ just benchmark-cli 
@@ -19,4 +21,15 @@ cd rust-cli && cargo build --release && cp target/release/rust-cli . && hyperfin
 Benchmark 1: ./rust-cli
   Time (mean ± σ):      2.797 s ±  0.104 s    [User: 3.050 s, System: 1.230 s]
   Range (min … max):    2.649 s …  2.966 s    10 runs
+```
+
+## Collecting only after final aggregation
+
+```bash
+knidarkness@knidarknes-yoga:~/work/test-rust-wasm/rust-cli$ just benchmark-cli 
+cd rust-cli && cargo build --release && cp target/release/rust-cli . && hyperfine --warmup 3 './rust-cli'
+    Finished `release` profile [optimized] target(s) in 0.13s
+Benchmark 1: ./rust-cli
+  Time (mean ± σ):      2.387 s ±  0.241 s    [User: 2.516 s, System: 1.061 s]
+  Range (min … max):    2.010 s …  2.725 s    10 runs
 ```

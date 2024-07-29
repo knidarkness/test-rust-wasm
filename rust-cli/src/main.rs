@@ -19,18 +19,12 @@ fn main() {
             [col("productId")],
             products_join_args,
         )
-        .collect()
-        .unwrap()
-        .lazy()
         .join(
             df_customers.lazy(),
             [col("orderCustomerId")],
             [col("customerId")],
             customers_join_args
         )
-        .collect()
-        .unwrap()
-        .lazy()
         .join(
             df_vendors.lazy(),
             [col("orderVendorId")],
